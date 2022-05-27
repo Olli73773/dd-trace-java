@@ -218,7 +218,7 @@ abstract class AgentTestRunner extends DDSpecification implements AgentBuilder.L
   }
 
   private void enableAppSec() {
-    if (Config.get().isAppSecEnabled()) {
+    if (Config.get().getAppSecEnabledConfig()) {
       return
     }
 

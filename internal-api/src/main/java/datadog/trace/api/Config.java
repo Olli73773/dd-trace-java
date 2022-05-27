@@ -495,7 +495,7 @@ public class Config {
   private final boolean profilingHotspotsEnabled;
   private final boolean profilingUploadSummaryOn413Enabled;
 
-  private final boolean appSecEnabled;
+  private final ProductActivationConfig appSecEnabled;
   private final boolean appSecReportingInband;
   private final String appSecRulesFile;
   private final int appSecReportMinTimeout;
@@ -1039,7 +1039,8 @@ public class Config {
 
     telemetryEnabled = configProvider.getBoolean(TELEMETRY_ENABLED, DEFAULT_TELEMETRY_ENABLED);
 
-    appSecEnabled = configProvider.getBoolean(APPSEC_ENABLED, DEFAULT_APPSEC_ENABLED);
+    String appSecEnabled = configProvider.getString(APPSEC_ENABLED, DEFAULT_APPSEC_ENABLED);
+    this.appSecEnabled = ProductActivationConfig.fromString(appSecEnabled);
     appSecReportingInband =
         configProvider.getBoolean(APPSEC_REPORTING_INBAND, DEFAULT_APPSEC_REPORTING_INBAND);
     appSecRulesFile = configProvider.getString(APPSEC_RULES_FILE, null);
@@ -1679,7 +1680,7 @@ public class Config {
     return telemetryEnabled;
   }
 
-  public boolean isAppSecEnabled() {
+  public ProductActivationConfig getAppSecEnabledConfig() {
     return appSecEnabled;
   }
 

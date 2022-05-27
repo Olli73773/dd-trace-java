@@ -113,9 +113,7 @@ public class Agent {
 
   private static boolean jmxFetchEnabled = true;
   private static boolean profilingEnabled = false;
-  private static boolean appSecEnabled = false;
   private static boolean iastEnabled = false;
-  private static boolean remoteConfigEnabled = true;
   private static boolean cwsEnabled = false;
   private static boolean ciVisibilityEnabled = false;
   private static boolean telemetryEnabled = false;
@@ -152,9 +150,10 @@ public class Agent {
 
     jmxFetchEnabled = isFeatureEnabled(AgentFeature.JMXFETCH);
     profilingEnabled = isFeatureEnabled(AgentFeature.PROFILING);
-    appSecEnabled = isFeatureEnabled(AgentFeature.APPSEC);
     iastEnabled = isFeatureEnabled(AgentFeature.IAST);
-    remoteConfigEnabled = isFeatureEnabled(AgentFeature.REMOTE_CONFIG);
+    boolean appSecEnabled = isFeatureEnabled(AgentFeature.APPSEC);
+    boolean appSecNotFullyDisabled = isAppSecNotFullyDisabled();
+    boolean remoteConfigEnabled = isFeatureEnabled(AgentFeature.REMOTE_CONFIG);
     cwsEnabled = isFeatureEnabled(AgentFeature.CWS);
     telemetryEnabled = isFeatureEnabled(AgentFeature.TELEMETRY);
 
@@ -191,7 +190,7 @@ public class Agent {
     AgentTaskScheduler.initialize();
     startDatadogAgent(inst, bootstrapURL);
 
-    if (appSecEnabled) {
+    if (appSecEnabled || (remoteConfigEnabled && appSecNotFullyDisabled)) {
       if (isJavaVersionAtLeast(8)) {
         try {
           APPSEC_CLASSLOADER =
@@ -860,6 +859,7 @@ public class Agent {
 
   /** @return {@code true} if the agent feature is enabled */
   private static boolean isFeatureEnabled(AgentFeature feature) {
+    // must be kept in sync with logic from Config!
     final String featureEnabledSysprop = feature.getSystemProp();
     String featureEnabled = System.getProperty(featureEnabledSysprop);
     if (featureEnabled == null) {
@@ -873,6 +873,22 @@ public class Agent {
       // false unless it's explicitly set to "true"
       return Boolean.parseBoolean(featureEnabled) || "1".equals(featureEnabled);
     }
+  }
+
+  /** @see datadog.trace.api.ProductActivationConfig#fromString(String) */
+  private static boolean isAppSecNotFullyDisabled() {
+    // must be kept in sync with logic from Config!
+    final String featureEnabledSysprop = AgentFeature.APPSEC.systemProp;
+    String settingValue = System.getProperty(featureEnabledSysprop);
+    if (settingValue == null) {
+      settingValue = ddGetEnv(featureEnabledSysprop);
+    }
+
+    // defaults to inactive
+    return settingValue == null
+        || settingValue.equalsIgnoreCase("true")
+        || settingValue.equalsIgnoreCase("1")
+        || settingValue.equalsIgnoreCase("inactive");
   }
 
   /** @return configured JMX start delay in seconds */
