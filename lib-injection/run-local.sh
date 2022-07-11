@@ -13,9 +13,10 @@ fi
 
 kubectl apply -f dd-apm-test-agent-config.yaml
 kubectl rollout status daemonset/datadog-agent
-sleep 1
+# pods can take a few seconds to show up, especially when running locally in kind
+sleep 15
 POD_NAME=$(kubectl get pods -l app=datadog-agent -o name)
-kubectl wait $POD_NAME --for condition=ready
+kubectl wait $POD_NAME --for condition=ready --timeout=2m
 
 mkdir -p ../dd-java-agent/build/libs
 wget -O ../dd-java-agent/build/libs/dd-java-agent.jar https://dtdg.co/latest-java-tracer
