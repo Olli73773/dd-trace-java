@@ -301,6 +301,8 @@ include ':dd-java-agent:benchmark-integration:play-perftest'
 // CWS Tls
 include ':dd-cws-tls'
 
+include ':lib-injection:application'
+
 def setBuildFile(project) {
   project.buildFileName = "${project.name}.gradle"
   project.children.each {
