@@ -11,8 +11,6 @@ import datadog.trace.agent.tooling.context.FieldBackedContextProvider;
 import datadog.trace.api.Config;
 import datadog.trace.bootstrap.FieldBackedContextAccessor;
 import datadog.trace.bootstrap.instrumentation.java.concurrent.ExcludeFilter;
-import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -33,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class AgentInstaller {
   private static final Logger log = LoggerFactory.getLogger(AgentInstaller.class);
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = log.isDebugEnabled();
 
   private static final List<Runnable> LOG_MANAGER_CALLBACKS = new CopyOnWriteArrayList<>();
   private static final List<Runnable> MBEAN_SERVER_BUILDER_CALLBACKS = new CopyOnWriteArrayList<>();
@@ -266,11 +264,6 @@ public class AgentInstaller {
         final JavaModule module,
         final boolean loaded,
         final DynamicType dynamicType) {
-      try {
-        dynamicType.saveIn(new File("/home/jsantos/deleteme/"));
-      } catch (IOException e) {
-        System.out.println("Error saving file");
-      }
       if (DEBUG) {
         log.debug(
             "Transformed - instrumentation.target.class={} instrumentation.target.classloader={}",

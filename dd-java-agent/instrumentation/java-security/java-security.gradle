@@ -15,3 +15,6 @@ testSets {
   }
 }
 
+tasks.withType(Test).configureEach {
+  jvmArgs += ['-Diast.enabled=true']
+}

@@ -13,7 +13,7 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatchers;
 
 @AutoService(Instrumenter.class)
-public class WeakHashInstrumentation extends Instrumenter.AppSecIast
+public class WeakHashInstrumentation extends Instrumenter.Iast
     implements Instrumenter.ForSingleType {
 
   private static final Config config = Config.get();
