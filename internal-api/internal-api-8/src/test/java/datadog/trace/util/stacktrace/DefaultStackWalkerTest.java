@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
@@ -19,17 +21,17 @@ public class DefaultStackWalkerTest {
   @Test
   public void walk_retrieves_stackTraceElements() {
     // When
-    Stream<StackTraceElement> stream = defaultStackWalker.walk();
+    List<StackTraceElement> stream = defaultStackWalker.walk(this::toList);
     // Then
-    assertNotEquals(stream.count(), 0);
+    assertNotEquals(stream.size(), 0);
   }
 
   @Test
   public void get_stack_trace() {
     // When
-    Stream<StackTraceElement> stream = defaultStackWalker.doGetStack();
+    List<StackTraceElement> stream = defaultStackWalker.doGetStack(this::toList);
     // Then
-    assertNotEquals(stream.count(), 0);
+    assertNotEquals(stream.size(), 0);
   }
 
   @Test
@@ -61,5 +63,9 @@ public class DefaultStackWalkerTest {
 
   private StackTraceElement element(final String className) {
     return new StackTraceElement(className, "method", "fileName", 1);
+  }
+
+  private List<StackTraceElement> toList(final Stream<StackTraceElement> stack) {
+    return stack.collect(Collectors.toList());
   }
 }

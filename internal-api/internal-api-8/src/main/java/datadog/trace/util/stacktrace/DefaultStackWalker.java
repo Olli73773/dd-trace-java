@@ -1,6 +1,7 @@
 package datadog.trace.util.stacktrace;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class DefaultStackWalker extends AbstractStackWalker {
@@ -13,7 +14,7 @@ public class DefaultStackWalker extends AbstractStackWalker {
   }
 
   @Override
-  Stream<StackTraceElement> doGetStack() {
-    return Arrays.stream(new Throwable().getStackTrace());
+  <T> T doGetStack(final Function<Stream<StackTraceElement>, T> consumer) {
+    return consumer.apply(Arrays.stream(new Throwable().getStackTrace()));
   }
 }
