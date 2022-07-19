@@ -10,19 +10,36 @@ class WeakHashTest extends AgentTestRunner{
 
   def "test instrumentation"() {
     setup:
-
+        List<String> algorithms = Arrays.asList(
+          "MD2",
+          "MD5",
+          "SHA",
+          "SHA1",
+          "md2",
+          "md5",
+          "sha",
+          "sha1")
 
     when:
 
     runUnderTrace("WeakHashingRootSpan") {
-      MessageDigest.getInstance("MD2")
+      for (String algorithm:algorithms) {
+        MessageDigest.getInstance(algorithm)
+      }
     }
 
     then:
     assertTraces(1, true) {
-      trace(2){
+      trace(algorithms.size() + 1){
         span{resourceName "WeakHashingRootSpan"}
-        span{resourceName "WeakHashingAlgorithm"}
+        span{resourceName "WeakHashingAlgorithm_sha1"}
+        span{resourceName "WeakHashingAlgorithm_sha"}
+        span{resourceName "WeakHashingAlgorithm_md5"}
+        span{resourceName "WeakHashingAlgorithm_md2"}
+        span{resourceName "WeakHashingAlgorithm_SHA1"}
+        span{resourceName "WeakHashingAlgorithm_SHA"}
+        span{resourceName "WeakHashingAlgorithm_MD5"}
+        span{resourceName "WeakHashingAlgorithm_MD2"}
       }
     }
   }

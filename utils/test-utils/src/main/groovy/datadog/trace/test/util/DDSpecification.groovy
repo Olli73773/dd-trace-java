@@ -139,7 +139,7 @@ abstract class DDSpecification extends Specification {
 
   private Map<Object, Object> nonAppSecSystemProperties() {
     System.getProperties()
-      .findAll { key, value -> key as String != 'dd.appsec.enabled' }
+      .findAll{it.getKey() != 'dd.appsec.enabled' && it.getKey()!='dd.iast.enabled'}
   }
 
   void setup() {

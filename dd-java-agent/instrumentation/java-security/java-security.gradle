@@ -16,5 +16,5 @@ testSets {
 }
 
 tasks.withType(Test).configureEach {
-  jvmArgs += ['-Diast.enabled=true']
+  jvmArgs += ['-Ddd.iast.enabled=true']
 }

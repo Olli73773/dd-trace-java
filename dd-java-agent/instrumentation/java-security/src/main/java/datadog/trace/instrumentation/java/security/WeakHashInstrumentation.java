@@ -1,4 +1,4 @@
-package datadog.trace.instrumentation.weakhash;
+package datadog.trace.instrumentation.java.security;
 
 import static net.bytebuddy.matcher.ElementMatchers.isPublic;
 import static net.bytebuddy.matcher.ElementMatchers.takesArgument;
@@ -46,10 +46,10 @@ public class WeakHashInstrumentation extends Instrumenter.Iast
 
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Argument(value = 0, readOnly = true) String algorithm) {
-      if (config.getWeakHashingAlgorithms().contains(algorithm.toUpperCase())) {
+      if (Config.get().getWeakHashingAlgorithms().contains(algorithm.toUpperCase())) {
         final AgentSpan span =
             datadog.trace.bootstrap.instrumentation.api.AgentTracer.startSpan(
-                "WeakHashingAlgorithm");
+                "WeakHashingAlgorithm_" + algorithm);
         span.finish();
       }
     }
