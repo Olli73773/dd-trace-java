@@ -10,15 +10,7 @@ class WeakHashTest extends AgentTestRunner{
 
   def "test instrumentation"() {
     setup:
-        List<String> algorithms = Arrays.asList(
-          "MD2",
-          "MD5",
-          "SHA",
-          "SHA1",
-          "md2",
-          "md5",
-          "sha",
-          "sha1")
+    List<String> algorithms = Arrays.asList("MD2","MD5","SHA","SHA1","md2","md5","sha","sha1")
 
     when:
 
