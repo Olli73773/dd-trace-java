@@ -114,7 +114,7 @@ public final class ConfigDefaults {
   static final int DEFAULT_RESOLVER_TYPE_POOL_SIZE = 64;
 
   static final Set<String> DEFAULT_IAST_WEAK_HASHING_ALGORITHMS =
-      new HashSet<>(Arrays.asList("MD2", "MD5", "SHA", "SHA1", "SHA-1"));
+      new HashSet<>(Arrays.asList("MD2", "MD5", "SHA", "SHA1", "SHA-1", "RIPEMD128", "MD4"));
 
   static final boolean DEFAULT_TELEMETRY_ENABLED = false;
 
