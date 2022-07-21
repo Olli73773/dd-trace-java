@@ -518,6 +518,9 @@ public class AgentTracer {
     public void finishThreadMigration() {}
 
     @Override
+    public void startWork() {}
+
+    @Override
     public void finishWork() {}
 
     @Override
