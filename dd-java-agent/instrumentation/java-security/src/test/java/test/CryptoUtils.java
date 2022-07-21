@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import javax.crypto.Cipher;
+
 public class CryptoUtils {
 
   HashMap<String, AlgoInfo> getInfos(Class<?> typeClass) {
@@ -66,7 +68,7 @@ public class CryptoUtils {
 
   public void printAllAlgosAndAliases() {
     // loadBouncyCastleProvider();
-    for (Map.Entry<String, AlgoInfo> entry : getInfos(MessageDigest.class).entrySet()) {
+    for (Map.Entry<String, AlgoInfo> entry : getInfos(Cipher.class).entrySet()) {
       System.out.println(entry.getKey() + " " + entry.getValue());
     }
   }
