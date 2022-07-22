@@ -1,14 +1,13 @@
 package datadog.trace.bootstrap;
 
 import datadog.trace.util.ClassNameTrie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Provides access to Datadog internal classes. */
 public final class DatadogClassLoader extends ClassLoader {
@@ -28,11 +27,12 @@ public final class DatadogClassLoader extends ClassLoader {
 
   private final JarFile jarFile;
 
-  public DatadogClassLoader(ClassLoader parent,
-                            BootstrapProxy bootstrapProxy,
-                            String[] sections,
-                            ClassNameTrie jarIndex,
-                            JarFile jarFile) {
+  public DatadogClassLoader(
+      ClassLoader parent,
+      BootstrapProxy bootstrapProxy,
+      String[] sections,
+      ClassNameTrie jarIndex,
+      JarFile jarFile) {
     super(parent);
     this.bootstrapProxy = bootstrapProxy;
     this.sections = sections;
