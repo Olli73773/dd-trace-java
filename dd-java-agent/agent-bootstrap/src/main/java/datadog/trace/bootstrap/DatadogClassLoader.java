@@ -1,11 +1,10 @@
 package datadog.trace.bootstrap;
 
-import datadog.trace.util.ClassNameTrie;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,21 +20,14 @@ public final class DatadogClassLoader extends ClassLoader {
 
   private final BootstrapProxy bootstrapProxy;
 
-  private final String[] sections;
-
-  private final ClassNameTrie jarIndex;
+  private final JarIndex jarIndex;
 
   private final JarFile jarFile;
 
   public DatadogClassLoader(
-      ClassLoader parent,
-      BootstrapProxy bootstrapProxy,
-      String[] sections,
-      ClassNameTrie jarIndex,
-      JarFile jarFile) {
+      ClassLoader parent, BootstrapProxy bootstrapProxy, JarIndex jarIndex, JarFile jarFile) {
     super(parent);
     this.bootstrapProxy = bootstrapProxy;
-    this.sections = sections;
     this.jarIndex = jarIndex;
     this.jarFile = jarFile;
   }
@@ -55,25 +47,21 @@ public final class DatadogClassLoader extends ClassLoader {
 
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    int sectionIndex = jarIndex.apply(name);
-    if (sectionIndex >= 0) {
-      String path = sections[sectionIndex] + name.replace('.', '/') + ".classdata";
-      ZipEntry jarEntry = jarFile.getEntry(path);
-      if (null != jarEntry) {
-        if (jarEntry.getSize() < MAX_CLASSDATA_SIZE) {
-          byte[] buf = new byte[(int) jarEntry.getSize()];
-          try (InputStream in = jarFile.getInputStream(jarEntry)) {
-            if (in.read(buf) == buf.length) {
-              return defineClass(name, buf, 0, buf.length);
-            } else {
-              log.warn("Malformed class data at {}", path);
-            }
-          } catch (IOException e) {
-            log.warn("Problem reading class data at {}", path, e);
+    JarEntry jarEntry = jarIndex.lookup(jarFile, name);
+    if (null != jarEntry) {
+      if (jarEntry.getSize() < MAX_CLASSDATA_SIZE) {
+        byte[] buf = new byte[(int) jarEntry.getSize()];
+        try (InputStream in = jarFile.getInputStream(jarEntry)) {
+          if (in.read(buf) == buf.length) {
+            return defineClass(name, buf, 0, buf.length);
+          } else {
+            log.warn("Malformed class data at {}", jarEntry);
           }
-        } else {
-          log.warn("Unexpected class data size at {}", path);
+        } catch (IOException e) {
+          log.warn("Problem reading class data at {}", jarEntry, e);
         }
+      } else {
+        log.warn("Unexpected class data size at {}", jarEntry);
       }
     }
     throw new ClassNotFoundException(name);
