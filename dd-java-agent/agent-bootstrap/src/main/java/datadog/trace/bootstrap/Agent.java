@@ -435,8 +435,7 @@ public class Agent {
     if (SHARED_CLASSLOADER == null) {
       try {
         final Class<?> bootstrapProxyClass =
-            ClassLoader.getSystemClassLoader()
-                .loadClass("datadog.trace.bootstrap.DatadogClassLoader$BootstrapClassLoaderProxy");
+            ClassLoader.getSystemClassLoader().loadClass("datadog.trace.bootstrap.BootstrapProxy");
         final Constructor constructor = bootstrapProxyClass.getDeclaredConstructor(URL.class);
         BOOTSTRAP_PROXY = (ClassLoader) constructor.newInstance(bootstrapURL);
 
