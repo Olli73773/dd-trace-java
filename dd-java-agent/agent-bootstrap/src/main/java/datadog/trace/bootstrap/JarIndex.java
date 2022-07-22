@@ -12,21 +12,20 @@ public final class JarIndex {
   }
 
   public JarEntry lookup(JarFile jarFile, String name) {
-    String classDataName = name.replace('.', '/') + ".classdata";
     int index = lastIndex;
-    JarEntry jarEntry = jarFile.getJarEntry(sections[index] + classDataName);
+    JarEntry jarEntry = jarFile.getJarEntry(sections[index] + name);
     if (null != jarEntry) {
       return jarEntry;
     }
     for (int i = 0; i < index; i++) {
-      jarEntry = jarFile.getJarEntry(sections[i] + classDataName);
+      jarEntry = jarFile.getJarEntry(sections[i] + name);
       if (null != jarEntry) {
         lastIndex = i;
         return jarEntry;
       }
     }
     for (int i = index + 1; i < sections.length; i++) {
-      jarEntry = jarFile.getJarEntry(sections[i] + classDataName);
+      jarEntry = jarFile.getJarEntry(sections[i] + name);
       if (null != jarEntry) {
         lastIndex = i;
         return jarEntry;

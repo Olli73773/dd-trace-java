@@ -2,7 +2,10 @@ package datadog.trace.bootstrap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.slf4j.Logger;
@@ -46,13 +49,44 @@ public final class DatadogClassLoader extends ClassLoader {
   }
 
   @Override
+  protected URL findResource(String name) {
+    JarEntry jarEntry = jarIndex.lookup(jarFile, name.endsWith(".class") ? name + "data" : name);
+    if (null != jarEntry) {
+      String location = "jar:file:" + jarFile.getName() + "!/" + jarEntry.getName();
+      try {
+        return new URL(location);
+      } catch (MalformedURLException e) {
+        log.warn("Malformed location {}", location);
+      }
+    }
+    return null;
+  }
+
+  @Override
+  protected Enumeration<URL> findResources(String name) {
+    URL resource = findResource(name);
+    if (null != resource) {
+      return Collections.enumeration(Collections.singleton(resource));
+    }
+    return null;
+  }
+
+  @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    JarEntry jarEntry = jarIndex.lookup(jarFile, name);
+    JarEntry jarEntry = jarIndex.lookup(jarFile, name.replace('.', '/') + ".classdata");
     if (null != jarEntry) {
       if (jarEntry.getSize() < MAX_CLASSDATA_SIZE) {
         byte[] buf = new byte[(int) jarEntry.getSize()];
         try (InputStream in = jarFile.getInputStream(jarEntry)) {
-          if (in.read(buf) == buf.length) {
+          int bytesRead = in.read(buf);
+          while (bytesRead < buf.length) {
+            int delta = in.read(buf, bytesRead, buf.length - bytesRead);
+            if (delta < 0) {
+              break;
+            }
+            bytesRead += delta;
+          }
+          if (bytesRead == buf.length) {
             return defineClass(name, buf, 0, buf.length);
           } else {
             log.warn("Malformed class data at {}", jarEntry);
