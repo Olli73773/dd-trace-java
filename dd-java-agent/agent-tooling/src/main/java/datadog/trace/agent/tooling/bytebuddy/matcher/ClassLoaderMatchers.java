@@ -22,8 +22,6 @@ public final class ClassLoaderMatchers {
   private static final ClassLoader BOOTSTRAP_CLASSLOADER = null;
   private static final String DATADOG_CLASSLOADER_NAME =
       "datadog.trace.bootstrap.DatadogClassLoader";
-  private static final String DATADOG_DELEGATE_CLASSLOADER_NAME =
-      "datadog.trace.bootstrap.DatadogClassLoader$DelegateClassLoader";
 
   private static final boolean HAS_CLASSLOADER_EXCLUDES =
       !Config.get().getExcludedClassLoaders().isEmpty();
@@ -71,7 +69,6 @@ public final class ClassLoaderMatchers {
       case "org.apache.cxf.common.util.ASMHelper$TypeHelperClassLoader":
       case "sun.misc.Launcher$ExtClassLoader":
       case DATADOG_CLASSLOADER_NAME:
-      case DATADOG_DELEGATE_CLASSLOADER_NAME:
         return true;
     }
     if (HAS_CLASSLOADER_EXCLUDES) {
