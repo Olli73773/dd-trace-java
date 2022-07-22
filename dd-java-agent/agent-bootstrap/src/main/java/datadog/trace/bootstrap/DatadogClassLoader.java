@@ -35,6 +35,22 @@ public final class DatadogClassLoader extends ClassLoader {
     this.jarFile = jarFile;
   }
 
+  public ClassLoader getBootstrapProxy() {
+    return bootstrapProxy;
+  }
+
+  @Override
+  protected Package[] getPackages() {
+    System.err.println("!!!!!!!! GET PACKAGES");new Throwable().printStackTrace();
+    return super.getPackages();
+  }
+
+  @Override
+  protected Package getPackage(String name) {
+    System.err.println("!!!!!!!! GET PACKAGE "+name);new Throwable().printStackTrace();
+    return super.getPackage(name);
+  }
+
   @Override
   public URL getResource(String name) {
     URL bootstrapResource = bootstrapProxy.getResource(name);
@@ -42,10 +58,6 @@ public final class DatadogClassLoader extends ClassLoader {
       return bootstrapResource;
     }
     return super.getResource(name);
-  }
-
-  public ClassLoader getBootstrapProxy() {
-    return bootstrapProxy;
   }
 
   @Override
@@ -68,7 +80,7 @@ public final class DatadogClassLoader extends ClassLoader {
     if (null != resource) {
       return Collections.enumeration(Collections.singleton(resource));
     }
-    return null;
+    return Collections.emptyEnumeration();
   }
 
   @Override

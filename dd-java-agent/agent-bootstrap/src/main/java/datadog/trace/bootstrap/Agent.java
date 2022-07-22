@@ -396,7 +396,7 @@ public class Agent {
             new DatadogClassLoader(
                 parent,
                 bootstrapProxy,
-                new JarIndex(new String[] {"shared/", "inst/", "metrics/", "profiling/", "appsec/"}),
+                new JarIndex(new String[] {"shared/", "inst/", "metrics/"/*, "profiling/", "appsec/"*/}),
                 jarFile);
       } catch (final Throwable ex) {
         log.error("Throwable thrown creating agent classloader", ex);
