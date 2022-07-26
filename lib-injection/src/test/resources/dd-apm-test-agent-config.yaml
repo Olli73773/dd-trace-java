@@ -23,6 +23,8 @@ spec:
           value: "0"
         - name: PORT
           value: "18126"
+        # - name: DD_APM_RECEIVER_SOCKET
+        #   value: /var/run/datadog/apm.socket
         image: ghcr.io/datadog/dd-apm-test-agent/ddapm-test-agent:latest
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -39,6 +41,9 @@ spec:
           hostPort: 18126
           name: traceport
           protocol: TCP
+        volumeMounts:
+          - mountPath: /var/run/datadog
+            name: datadog
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
@@ -47,6 +52,11 @@ spec:
       securityContext:
         runAsUser: 0
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: datadog
+          hostPath:
+            path: /var/run/datadog
+            type: DirectoryOrCreate
   updateStrategy:
     rollingUpdate:
       maxSurge: 0
